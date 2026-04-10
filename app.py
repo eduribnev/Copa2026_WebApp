@@ -31,7 +31,7 @@ st.markdown("""
 # Engenharia de Dados: Ingestão e Processamento
 # ---------------------------------------------------------
 # Para ler remotamente depois, basta trocar a string pelo URL raw do GitHub
-DATA_URL = "https://raw.githubusercontent.com/eduribnev/Copa2026_WebApp/refs/heads/main/dados_copa.json" 
+DATA_URL = "dados_copa.json" 
 
 @st.cache_data(ttl=600) # Cache expira em 10 min, ou manualmente no botão
 def carregar_dados(url):
@@ -92,13 +92,13 @@ def calcular_classificacao(selecoes, jogos):
 # Sidebar: Controles de Aplicação
 # ---------------------------------------------------------
 with st.sidebar:
-    st.image("https://upload.wikimedia.org/wikipedia/commons/e/e3/2026_FIFA_World_Cup_logo.svg", width=200)
+    st.image("https://i.pinimg.com/1200x/2f/3b/60/2f3b607f2525dd613034cd05ef8f53bc.jpg", width=200)
     st.markdown("### Controle de Dados")
     if st.button("🔄 Atualizar Dados Agora", use_container_width=True):
         st.cache_data.clear()
         st.rerun()
     st.markdown("---")
-    st.caption("Desenvolvido por um Full-Stack AI")
+    st.caption("Desenvolvido por Eduardo Neves | Segurança da Informação")
 
 # Carregamento de Dados
 dados = carregar_dados(DATA_URL)
