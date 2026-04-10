@@ -31,7 +31,7 @@ st.markdown("""
 # Engenharia de Dados: Ingestão e Processamento
 # ---------------------------------------------------------
 # Para ler remotamente depois, basta trocar a string pelo URL raw do GitHub
-DATA_URL = "dados_copa.json" 
+DATA_URL = "https://raw.githubusercontent.com/eduribnev/Copa2026_WebApp/refs/heads/main/dados_copa.json" 
 
 @st.cache_data(ttl=600) # Cache expira em 10 min, ou manualmente no botão
 def carregar_dados(url):
