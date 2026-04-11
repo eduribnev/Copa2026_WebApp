@@ -1,9 +1,26 @@
+import feedparser
 import streamlit as st
 import pandas as pd
 import json
 import requests
 from datetime import datetime
 import plotly.express as px
+
+# --- FUNÇÃO DE NOTÍCIAS ---
+def carregar_noticias():
+    # RSS do GE focado em Copa do Mundo / Futebol Internacional
+    url_rss = "https://ge.globo.com/servico/semantico/editorias/video/esporte/futebol/futebol-internacional/feed.rss"
+    try:
+        feed = feedparser.parse(url_rss)
+        if feed.entries:
+            for entry in feed.entries[:3]: # Mostra as 3 notícias mais recentes
+                with st.expander(f"📌 {entry.title}"):
+                    st.write(entry.summary[:200] + "...")
+                    st.markdown(f"[Leia a matéria completa]({entry.link})")
+        else:
+            st.info("Nenhuma atualização nova no momento. Volte em breve!")
+    except Exception:
+        st.error("Erro ao carregar notícias dinâmicas.")
 
 # ---------------------------------------------------------
 # Configuração da Página e Cores (Design Copa 2026)
@@ -30,10 +47,9 @@ st.markdown("""
 # ---------------------------------------------------------
 # Engenharia de Dados: Ingestão e Processamento
 # ---------------------------------------------------------
-# Para ler remotamente depois, basta trocar a string pelo URL raw do GitHub
 DATA_URL = "dados_copa.json" 
 
-@st.cache_data(ttl=600) # Cache expira em 10 min, ou manualmente no botão
+@st.cache_data(ttl=600)
 def carregar_dados(url):
     try:
         if url.startswith("http"):
@@ -47,15 +63,10 @@ def carregar_dados(url):
         return None
 
 def calcular_classificacao(selecoes, jogos):
-    """Motor de cálculo de classificação (ETL) baseado nos resultados."""
-    # Inicializa a tabela
     tabela = {s['nome']: {'Grupo': s['grupo'], 'PTS': 0, 'J': 0, 'V': 0, 'E': 0, 'D': 0, 'GP': 0, 'GC': 0, 'SG': 0} for s in selecoes}
-    
-    # Processa os jogos que já ocorreram
     for jogo in jogos:
         t1, t2 = jogo['time1'], jogo['time2']
         p1, p2 = jogo['placar1'], jogo['placar2']
-        
         if p1 is not None and p2 is not None:
             tabela[t1]['J'] += 1
             tabela[t2]['J'] += 1
@@ -63,7 +74,6 @@ def calcular_classificacao(selecoes, jogos):
             tabela[t1]['GC'] += p2
             tabela[t2]['GP'] += p2
             tabela[t2]['GC'] += p1
-            
             if p1 > p2:
                 tabela[t1]['PTS'] += 3
                 tabela[t1]['V'] += 1
@@ -77,14 +87,10 @@ def calcular_classificacao(selecoes, jogos):
                 tabela[t2]['PTS'] += 1
                 tabela[t1]['E'] += 1
                 tabela[t2]['E'] += 1
-
-    # Calcula Saldo de Gols e converte para DataFrame
     for t in tabela.values():
         t['SG'] = t['GP'] - t['GC']
-        
     df = pd.DataFrame.from_dict(tabela, orient='index').reset_index()
     df.rename(columns={'index': 'Seleção'}, inplace=True)
-    # Ordena por Pontos, Saldo de Gols e Gols Pró
     df = df.sort_values(by=['Grupo', 'PTS', 'SG', 'GP'], ascending=[True, False, False, False])
     return df
 
@@ -121,7 +127,6 @@ aba1, aba2, aba3, aba4, aba5 = st.tabs([
 with aba1:
     st.header("Contagem Regressiva e Notícias")
     col1, col2 = st.columns([1, 2])
-    
     with col1:
         data_copa = datetime(2026, 6, 11)
         faltam = (data_copa - datetime.now()).days
@@ -131,25 +136,19 @@ with aba1:
                 <h3 style='margin: 0; color: white !important;'>Dias para a Copa</h3>
             </div>
         """, unsafe_allow_html=True)
-        
     with col2:
         st.subheader("Últimas Atualizações")
-        st.info("🔥 A Copa de 2026 terá 48 seleções divididas em 12 grupos de 4 equipes!")
-        st.success("⚽ O Brasil estreia em breve. Fique atento à aba de transmissões.")
-        st.warning("🏆 O formato mudou: Os 2 melhores de cada grupo e os 8 melhores terceiros avançam!")
-
+        carregar_noticias()
+        
 # --- ABA 2: GRUPOS E CLASSIFICAÇÃO ---
 with aba2:
     st.header("Classificação por Grupos")
     grupos = sorted(df_classificacao['Grupo'].unique())
-    
-    # Grid de 3 colunas para mostrar 12 grupos dinamicamente
     cols = st.columns(3)
     for i, grupo in enumerate(grupos):
         with cols[i % 3]:
             st.subheader(f"Grupo {grupo}")
             df_g = df_classificacao[df_classificacao['Grupo'] == grupo].drop(columns=['Grupo'])
-            # Configura index a partir de 1
             df_g.index = range(1, len(df_g) + 1)
             st.dataframe(df_g, use_container_width=True)
 
@@ -161,15 +160,12 @@ with aba3:
         filtro_grupo = st.multiselect("Filtrar por Grupo:", options=sorted(df_jogos['grupo'].dropna().unique()))
     with col_filtro2:
         filtro_selecao = st.text_input("Buscar Seleção:")
-        
     df_filtrado = df_jogos.copy()
     if filtro_grupo:
         df_filtrado = df_filtrado[df_filtrado['grupo'].isin(filtro_grupo)]
     if filtro_selecao:
         mask = df_filtrado['time1'].str.contains(filtro_selecao, case=False) | df_filtrado['time2'].str.contains(filtro_selecao, case=False)
         df_filtrado = df_filtrado[mask]
-        
-    # Formatação visual
     for _, row in df_filtrado.iterrows():
         placar_str = f"{int(row['placar1'])} x {int(row['placar2'])}" if pd.notnull(row['placar1']) else "vs"
         st.markdown(f"**{row['data']}** | {row['fase']} (Grupo {row['grupo']})")
@@ -178,7 +174,6 @@ with aba3:
 
 # --- ABA 4: ONDE ASSISTIR ---
 def renderizar_botao_link(nome, url, key):
-    """Regra de negócio: Se a URL existir, botão ativo. Se não, botão desabilitado."""
     if url and str(url).strip() != "":
         st.link_button(f"▶ {nome}", url, use_container_width=True)
     else:
@@ -189,10 +184,8 @@ with aba4:
     for idx, row in df_jogos.iterrows():
         st.subheader(f"{row['time1']} vs {row['time2']}")
         st.caption(f"Data: {row['data']}")
-        
         links = row.get("links", {})
         c1, c2, c3, c4, c5 = st.columns(5)
-        
         with c1: renderizar_botao_link("CazéTV", links.get("cazetv"), f"caze_{idx}")
         with c2: renderizar_botao_link("GE", links.get("ge"), f"ge_{idx}")
         with c3: renderizar_botao_link("SporTV", links.get("sportv"), f"sportv_{idx}")
@@ -205,8 +198,6 @@ with aba5:
     st.header("Probabilidade de Título")
     df_probs = pd.DataFrame(dados['probabilidades'])
     df_probs = df_probs.sort_values(by="chance", ascending=True)
-    
-    # Gráfico elegante usando Plotly Express
     fig = px.bar(
         df_probs, x="chance", y="time", orientation='h', 
         title="Top Favoritos para Vencer em 2026",
