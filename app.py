@@ -256,7 +256,7 @@ with aba5:
         title="Chances de Título (Probabilidade Computada)",
         labels={"chance": "Chances (%)", "time": "Seleção"},
         color="chance", 
-        hover_data={"odd": True}, # Mostra a Odd quando passa o mouse
+        hover_data={"change": True}, # Mostra a Odd quando passa o mouse
         color_continuous_scale=["#4B0082", "#FF004D", "#00FF87"]
     )
     fig.update_layout(plot_bgcolor="rgba(0,0,0,0)", paper_bgcolor="rgba(0,0,0,0)", font_color="white")
