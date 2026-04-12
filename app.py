@@ -6,7 +6,7 @@ import requests
 from datetime import datetime
 import plotly.express as px
 
-# --- FUNÇÃO DE NOTÍCIAS ---
+# --- FUNÇÃO DE NOTÍCIAS (CORRIGIDA) ---
 def carregar_noticias():
     # RSS do GE focado em Copa do Mundo / Futebol Internacional
     url_rss = "https://ge.globo.com/servico/semantico/editorias/video/esporte/futebol/futebol-internacional/feed.rss"
@@ -144,14 +144,46 @@ with aba1:
 with aba2:
     st.header("Classificação por Grupos")
     grupos = sorted(df_classificacao['Grupo'].unique())
-    cols = st.columns(3)
-    for i, grupo in enumerate(grupos):
-        with cols[i % 3]:
-            st.subheader(f"Grupo {grupo}")
-            df_g = df_classificacao[df_classificacao['Grupo'] == grupo].drop(columns=['Grupo'])
-            df_g.index = range(1, len(df_g) + 1)
-            st.dataframe(df_g, use_container_width=True)
+    
+    # Mapeamento para nomes completos das colunas
+    nomes_completos = {
+        'Seleção': 'Seleção',
+        'PTS': 'Pontos',
+        'J': 'Jogos',
+        'V': 'Vitórias',
+        'E': 'Empates',
+        'D': 'Derrotas',
+        'GP': 'Gols Pró',
+        'GC': 'Gols Contra',
+        'SG': 'Saldo de Gols'
+    }
 
+    for grupo in grupos:
+        st.subheader(f"Grupo {grupo}")
+        # Filtra os dados do grupo atual e renomeia
+        df_g = df_classificacao[df_classificacao['Grupo'] == grupo].drop(columns=['Grupo'])
+        df_g = df_g.rename(columns=nomes_completos)
+        
+        # Reseta o index para começar de 1
+        df_g.index = range(1, len(df_g) + 1)
+        
+        # Configuração avançada: Centraliza o conteúdo E o cabeçalho
+        # Usamos st.column_config.TextColumn para a Seleção e NumberColumn para os pontos
+        config_centralizada = {}
+        for col in df_g.columns:
+            if col == 'Seleção':
+                config_centralizada[col] = st.column_config.TextColumn(label=col, alignment="center")
+            else:
+                config_centralizada[col] = st.column_config.NumberColumn(label=col, alignment="center")
+        
+        # Exibe a tabela
+        st.dataframe(
+            df_g, 
+            use_container_width=True, 
+            column_config=config_centralizada
+        )
+        st.divider()
+        
 # --- ABA 3: TABELA DE JOGOS ---
 with aba3:
     st.header("Tabela Completa de Jogos")
@@ -195,14 +227,37 @@ with aba4:
 
 # --- ABA 5: FAVORITOS E ODDS ---
 with aba5:
-    st.header("Probabilidade de Título")
+    st.header("Probabilidade de Título e Odds Reais")
+    
+    # Transformando os dados em DataFrame
     df_probs = pd.DataFrame(dados['probabilidades'])
-    df_probs = df_probs.sort_values(by="chance", ascending=True)
+    
+    # Ordenando pelos favoritos (maior chance)
+    df_probs = df_probs.sort_values(by="chance", ascending=False)
+
+    # Criando métricas em colunas para os 3 principais favoritos
+    top3 = df_probs.head(3)
+    cols = st.columns(3)
+    for i, (index, row) in enumerate(top3.iterrows()):
+        with cols[i]:
+            st.markdown(f"""
+                <div class="metric-card">
+                    <h3 style='margin:0;'>{row['time']}</h3>
+                    <p style='margin:0; font-size: 0.9rem;'>Chance: {row['chance']}%</p>
+                    <h2 style='color: #00FF87 !important; margin:0;'>Odd: {row.get('odd', 'N/A')}</h2>
+                </div>
+            """, unsafe_allow_html=True)
+
+    st.divider()
+
+    # Gráfico elegante com as Odds aparecendo no passar do mouse
     fig = px.bar(
         df_probs, x="chance", y="time", orientation='h', 
-        title="Top Favoritos para Vencer em 2026",
+        title="Chances de Título (Probabilidade Computada)",
         labels={"chance": "Chances (%)", "time": "Seleção"},
-        color="chance", color_continuous_scale=["#4B0082", "#FF004D", "#00FF87"]
+        color="chance", 
+        hover_data={"odd": True}, # Mostra a Odd quando passa o mouse
+        color_continuous_scale=["#4B0082", "#FF004D", "#00FF87"]
     )
     fig.update_layout(plot_bgcolor="rgba(0,0,0,0)", paper_bgcolor="rgba(0,0,0,0)", font_color="white")
     st.plotly_chart(fig, use_container_width=True)
