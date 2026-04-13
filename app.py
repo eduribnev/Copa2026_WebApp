@@ -190,7 +190,6 @@ with aba4:
             if url: cols[i].link_button(f"▶ {nome}", url, use_container_width=True)
             else: cols[i].button(f"⏸ {nome}", disabled=True, use_container_width=True, key=f"{key}_{idx}")
 
-# --- ABA 5: FAVORITOS E ODDS ---
 # --- ABA 5: FAVORITOS E ODDS (DINÂMICA) ---
 with aba5:
     st.header("Favoritos e Odds em Tempo Real")
@@ -199,42 +198,49 @@ with aba5:
     def buscar_odds_vencedor():
         try:
             api_key = st.secrets["ODDS_API_KEY"]
-            # Buscando odds de 'vencedor final' para a Copa 2026
             url = f"https://api.the-odds-api.com/v4/sports/soccer_fifa_world_cup_winner/odds/?apiKey={api_key}&regions=eu&markets=outrights"
             res = requests.get(url, timeout=10)
             data = res.json()
             if data and len(data) > 0:
-                # Extraindo a lista de seleções e preços do primeiro bookmaker
                 outcomes = data[0]['bookmakers'][0]['markets'][0]['outcomes']
                 return {item['name']: item['price'] for item in outcomes}
-        except Exception as e:
-            # Em caso de erro, retorna None e o app usa o backup do JSON
+        except Exception:
             return None
         return None
 
-    # 2. Processamento dos dados
+    # 2. Processamento dos dados com Cálculo de Probabilidade Real
     odds_reais = buscar_odds_vencedor()
-    df_probs = pd.DataFrame(dados['probabilidades']).sort_values(by="chance", ascending=False)
-
-    # 3. Mapeamento de nomes (API Inglês -> App Português)
+    
     if odds_reais:
-        # Se a API conectou, avisamos na barra lateral
         st.sidebar.success("Odds atualizadas via API")
         
+        # Tradutor de nomes para manter o padrão do seu App
         mapa_nomes = {
             "Brazil": "Brasil", "France": "França", "England": "Inglaterra", 
-            "Argentina": "Argentina", "Spain": "Espanha", "Germany": "Alemanha",
-            "Portugal": "Portugal", "Netherlands": "Holanda", "Italy": "Itália"
+            "Spain": "Espanha", "Argentina": "Argentina", "Germany": "Alemanha",
+            "Portugal": "Portugal", "Netherlands": "Holanda", "Italy": "Itália",
+            "Belgium": "Bélgica", "Uruguay": "Uruguai", "USA": "EUA"
         }
-        # Invertemos o mapa para facilitar a busca
-        mapa_reverso = {v: k for k, v in mapa_nomes.items()}
         
-        for idx, row in df_probs.iterrows():
-            nome_ingles = mapa_reverso.get(row['time'], row['time'])
-            if nome_ingles in odds_reais:
-                df_probs.at[idx, 'odd'] = odds_reais[nome_ingles]
+        # Criamos o DataFrame baseado nos dados dinâmicos da API
+        lista_dinamica = []
+        for nome_api, valor_odd in odds_reais.items():
+            nome_pt = mapa_nomes.get(nome_api, nome_api)
+            # Cálculo matemático: Probabilidade Implícita = 100 / Odd
+            probabilidade = round(100 / valor_odd, 1)
+            
+            lista_dinamica.append({
+                "time": nome_pt,
+                "odd": valor_odd,
+                "chance": probabilidade
+            })
+        
+        df_probs = pd.DataFrame(lista_dinamica).sort_values(by="chance", ascending=False)
+    else:
+        # Fallback: Se a API falhar, usa os dados estáticos do seu JSON
+        df_probs = pd.DataFrame(dados['probabilidades']).sort_values(by="chance", ascending=False)
 
-    # 4. Exibição dos Cards (Top 3)
+    # 3. Exibição dos Cards (Top 3 - Agora com ranking real)
     cols = st.columns(3)
     top3 = df_probs.head(3)
     for i, (idx, row) in enumerate(top3.iterrows()):
@@ -243,20 +249,28 @@ with aba5:
             st.markdown(f"""
                 <div class="metric-card">
                     <h3 style='margin:0;'>{row['time']}</h3>
-                    <p style='margin:0;'>Chance: {row['chance']}%</p>
+                    <p style='margin:0;'>Probabilidade: {row['chance']}%</p>
                     <h2 style="color:#00FF87!important; margin:0;">Odd: {valor_odd}</h2>
                 </div>
             """, unsafe_allow_html=True)
     
     st.divider()
 
-    # 5. Gráfico de Barras Atualizado
+    # 4. Gráfico de Barras (Refletindo o favoritismo real do mercado)
     fig = px.bar(
-        df_probs, x="chance", y="time", orientation='h', 
-        title="Chances de Título vs Probabilidade de Mercado",
+        df_probs.head(15), # Mostra o Top 15 para não poluir muito
+        x="chance", 
+        y="time", 
+        orientation='h', 
+        title="Ranking de Favoritismo (Baseado em Probabilidade de Mercado)",
         color="chance", 
         color_continuous_scale=["#4B0082", "#FF004D", "#00FF87"],
-        labels={"chance": "Chance (%)", "time": "Seleção"}
+        labels={"chance": "Probabilidade de Título (%)", "time": "Seleção"}
     )
-    fig.update_layout(plot_bgcolor="rgba(0,0,0,0)", paper_bgcolor="rgba(0,0,0,0)", font_color="white")
+    fig.update_layout(
+        plot_bgcolor="rgba(0,0,0,0)", 
+        paper_bgcolor="rgba(0,0,0,0)", 
+        font_color="white",
+        yaxis={'categoryorder':'total ascending'} # Garante que o maior fica no topo
+    )
     st.plotly_chart(fig, use_container_width=True)
