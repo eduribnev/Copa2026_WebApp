@@ -11,12 +11,12 @@ from datetime import datetime
 # ---------------------------------------------------------
 
 def buscar_dados_api():
-    """Busca placares reais via API-Football usando a chave protegida."""
     try:
-        # Puxa a chave salva nos Secrets do Streamlit
+        if "API_KEY" not in st.secrets:
+            st.sidebar.error("Chave API_KEY não encontrada nos Secrets!")
+            return None
+            
         api_key = st.secrets["API_KEY"]
-        
-        # League ID 1 é a Copa do Mundo na API-Football
         url = "https://v3.football.api-sports.io/fixtures?league=1&season=2026"
         
         headers = {
@@ -24,14 +24,22 @@ def buscar_dados_api():
             'x-rapidapi-host': 'v3.football.api-sports.io'
         }
         
-        response = requests.get(url, headers=headers)
+        response = requests.get(url, headers=headers, timeout=10)
         data = response.json()
         
+        # LOG DE DEPURAÇÃO PARA VOCÊ VER NO NAVEGADOR
+        if data.get('errors'):
+            st.sidebar.error(f"Erro da API: {data['errors']}")
+            return None
+            
         if data.get('response'):
             return data['response']
-    except Exception:
-        # Se falhar, o app avisa silenciosamente na barra lateral
-        st.sidebar.warning("Usando dados locais (Modo Offline).")
+        else:
+            st.sidebar.info("API conectada, mas sem jogos para 2026 ainda.")
+            return None
+
+    except Exception as e:
+        st.sidebar.warning(f"Falha na conexão: {e}")
     return None
 
 def carregar_noticias():
@@ -114,7 +122,7 @@ dados_api = buscar_dados_api()
 if not dados:
     st.stop()
 
-
+# Aqui, no futuro, faremos o "merge" dos placares da API no dicionário 'dados'
 df_classificacao = calcular_classificacao(dados['selecoes'], dados['jogos'])
 df_jogos = pd.DataFrame(dados['jogos'])
 
