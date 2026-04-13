@@ -13,7 +13,7 @@ from datetime import datetime
 def buscar_dados_api():
     """Busca placares reais via API-Football usando a chave protegida."""
     try:
-        # Puxa a chave que você salvou nos Secrets do Streamlit
+        # Puxa a chave salva nos Secrets do Streamlit
         api_key = st.secrets["API_KEY"]
         
         # League ID 1 é a Copa do Mundo na API-Football
@@ -114,7 +114,7 @@ dados_api = buscar_dados_api()
 if not dados:
     st.stop()
 
-# Aqui, no futuro, faremos o "merge" dos placares da API no dicionário 'dados'
+
 df_classificacao = calcular_classificacao(dados['selecoes'], dados['jogos'])
 df_jogos = pd.DataFrame(dados['jogos'])
 
