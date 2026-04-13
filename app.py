@@ -29,7 +29,7 @@ def buscar_dados_api():
         
         # LOG DE DEPURAÇÃO PARA VOCÊ VER NO NAVEGADOR
         if data.get('errors'):
-            st.sidebar.error(f"Erro da API: {data['errors']}")
+            # st.sidebar.error(f"Erro da API: {data['errors']}")
             return None
             
         if data.get('response'):
