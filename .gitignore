@@ -1,0 +1,14 @@
+# Ignorar configurações e segredos do Streamlit (ESSENCIAL)
+.streamlit/secrets.toml
+
+# Ignorar pastas virtuais do Python
+venv/
+.venv/
+__pycache__/
+
+# Ignorar arquivos de sistema
+.DS_Store
+Thumbs.db
+
+# Ignorar arquivos temporários de teste que criamos
+teste_chave.py
