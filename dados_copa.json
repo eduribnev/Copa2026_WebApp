@@ -50,20 +50,50 @@
     {"nome": "Panamá", "grupo": "L", "PTS": 0, "J": 0, "V": 0, "E": 0, "D": 0, "GP": 0, "GC": 0, "SG": 0}
   ],
   "jogos": [
-    {
-      "id": 1, "data": "11/06/2026 16:00", "fase": "Fase de Grupos", "grupo": "A",
-      "time1": "México", "time2": "África do Sul", "placar1": 0, "placar2": 0,
-      "links": {"cazetv": "https://www.youtube.com/@CazeTV", "ge": "https://www.youtube.com/@getv", "sportv": "https://globoplay.globo.com/canais/sportv/", "espn": "https://espn.com", "disney": "https://disneyplus.com"}
-    },
-    {
-      "id": 2, "data": "13/06/2026 13:00", "fase": "Fase de Grupos", "grupo": "C",
-      "time1": "Brasil", "time2": "Marrocos", "placar1": null, "placar2": null,
-      "links": {"cazetv": "https://www.youtube.com/@CazeTV", "ge": "https://www.youtube.com/@getv", "sportv": "https://globoplay.globo.com/canais/sportv/", "espn": "https://espn.com", "disney": "https://disneyplus.com"}
-    }
-  ],
-  "probabilidades": [
-    {"time": "França", "chance": 18.5}, {"time": "Brasil", "chance": 16.0},
-    {"time": "Inglaterra", "chance": 14.2}, {"time": "Espanha", "chance": 12.0},
-    {"time": "Argentina", "chance": 10.5}, {"time": "Alemanha", "chance": 9.0}
-  ]
+  { "id": 1, "data": "11/06/2026 16:00", "fase": "Fase de Grupos", "grupo": "A", "time1": "México", "time2": "África do Sul", "placar1": null, "placar2": null, "links": {"cazetv": "https://youtube.com/@CazeTV", "ge": "https://ge.globo.com",
+    "sportv": "https://globoplay.globo.com/canais/sportv/"} },
+  { "id": 2, "data": "11/06/2026 19:00", "fase": "Fase de Grupos", "grupo": "A", "time1": "Coreia do Sul", "time2": "República Tcheca", "placar1": null, "placar2": null, "links": {"cazetv": "https://youtube.com/@CazeTV", "ge": "https://ge.globo.com",
+    "sportv": "https://globoplay.globo.com/canais/sportv/"} },
+  { "id": 3, "data": "12/06/2026 13:00", "fase": "Fase de Grupos", "grupo": "B", "time1": "Canadá", "time2": "Bósnia e Herz.", "placar1": null, "placar2": null, "links": {"cazetv": "https://youtube.com/@CazeTV", "ge": "https://ge.globo.com",
+    "sportv": "https://globoplay.globo.com/canais/sportv/"} },
+  { "id": 4, "data": "12/06/2026 16:00", "fase": "Fase de Grupos", "grupo": "B", "time1": "Catar", "time2": "Suíça", "placar1": null, "placar2": null, "links": {"cazetv": "https://youtube.com/@CazeTV", "ge": "https://ge.globo.com",
+    "sportv": "https://globoplay.globo.com/canais/sportv/"} },
+  { "id": 5, "data": "12/06/2026 19:00", "fase": "Fase de Grupos", "grupo": "D", "time1": "EUA", "time2": "Paraguai", "placar1": null, "placar2": null, "links": {"cazetv": "https://youtube.com/@CazeTV", "ge": "https://ge.globo.com",
+    "sportv": "https://globoplay.globo.com/canais/sportv/"} },
+  { "id": 6, "data": "13/06/2026 13:00", "fase": "Fase de Grupos", "grupo": "C", "time1": "Brasil", "time2": "Marrocos", "placar1": null, "placar2": null, "links": {"cazetv": "https://youtube.com/@CazeTV", "ge": "https://ge.globo.com",
+    "sportv": "https://globoplay.globo.com/canais/sportv/"} },
+  { "id": 7, "data": "13/06/2026 16:00", "fase": "Fase de Grupos", "grupo": "C", "time1": "Haiti", "time2": "Escócia", "placar1": null, "placar2": null, "links": {"cazetv": "https://youtube.com/@CazeTV", "ge": "https://ge.globo.com",
+    "sportv": "https://globoplay.globo.com/canais/sportv/"} },
+  { "id": 8, "data": "14/06/2026 14:00", "fase": "Fase de Grupos", "grupo": "E", "time1": "Alemanha", "time2": "Curaçao", "placar1": null, "placar2": null, "links": {"cazetv": "https://youtube.com/@CazeTV", "ge": "https://ge.globo.com",
+    "sportv": "https://globoplay.globo.com/canais/sportv/"} },
+  { "id": 9, "data": "14/06/2026 17:00", "fase": "Fase de Grupos", "grupo": "E", "time1": "Costa do Marfim", "time2": "Equador", "placar1": null, "placar2": null, "links": {"cazetv": "https://youtube.com/@CazeTV", "ge": "https://ge.globo.com",
+    "sportv": "https://globoplay.globo.com/canais/sportv/"} },
+  { "id": 10, "data": "15/06/2026 13:00", "fase": "Fase de Grupos", "grupo": "F", "time1": "Holanda", "time2": "Japão", "placar1": null, "placar2": null, "links": {"cazetv": "https://youtube.com/@CazeTV", "ge": "https://ge.globo.com",
+    "sportv": "https://globoplay.globo.com/canais/sportv/"} },
+  { "id": 11, "data": "15/06/2026 16:00", "fase": "Fase de Grupos", "grupo": "F", "time1": "Suécia", "time2": "Tunísia", "placar1": null, "placar2": null, "links": {"cazetv": "https://youtube.com/@CazeTV", "ge": "https://ge.globo.com",
+    "sportv": "https://globoplay.globo.com/canais/sportv/"} },
+  { "id": 12, "data": "16/06/2026 13:00", "fase": "Fase de Grupos", "grupo": "G", "time1": "Bélgica", "time2": "Egito", "placar1": null, "placar2": null, "links": {"cazetv": "https://youtube.com/@CazeTV", "ge": "https://ge.globo.com",
+    "sportv": "https://globoplay.globo.com/canais/sportv/"} },
+  { "id": 13, "data": "16/06/2026 16:00", "fase": "Fase de Grupos", "grupo": "G", "time1": "Irã", "time2": "Nova Zelândia", "placar1": null, "placar2": null, "links": {"cazetv": "https://youtube.com/@CazeTV", "ge": "https://ge.globo.com",
+    "sportv": "https://globoplay.globo.com/canais/sportv/"} },
+  { "id": 14, "data": "17/06/2026 13:00", "fase": "Fase de Grupos", "grupo": "H", "time1": "Espanha", "time2": "Cabo Verde", "placar1": null, "placar2": null, "links": {"cazetv": "https://youtube.com/@CazeTV", "ge": "https://ge.globo.com",
+    "sportv": "https://globoplay.globo.com/canais/sportv/"} },
+  { "id": 15, "data": "17/06/2026 16:00", "fase": "Fase de Grupos", "grupo": "H", "time1": "Arábia Saudita", "time2": "Uruguai", "placar1": null, "placar2": null, "links": {"cazetv": "https://youtube.com/@CazeTV", "ge": "https://ge.globo.com",
+    "sportv": "https://globoplay.globo.com/canais/sportv/"} },
+  { "id": 16, "data": "18/06/2026 13:00", "fase": "Fase de Grupos", "grupo": "I", "time1": "França", "time2": "Senegal", "placar1": null, "placar2": null, "links": {"cazetv": "https://youtube.com/@CazeTV", "ge": "https://ge.globo.com",
+    "sportv": "https://globoplay.globo.com/canais/sportv/"} },
+  { "id": 17, "data": "18/06/2026 16:00", "fase": "Fase de Grupos", "grupo": "I", "time1": "Iraque", "time2": "Noruega", "placar1": null, "placar2": null, "links": {"cazetv": "https://youtube.com/@CazeTV", "ge": "https://ge.globo.com",
+    "sportv": "https://globoplay.globo.com/canais/sportv/"} },
+  { "id": 18, "data": "19/06/2026 13:00", "fase": "Fase de Grupos", "grupo": "J", "time1": "Argentina", "time2": "Argélia", "placar1": null, "placar2": null, "links": {"cazetv": "https://youtube.com/@CazeTV", "ge": "https://ge.globo.com",
+    "sportv": "https://globoplay.globo.com/canais/sportv/"} },
+  { "id": 19, "data": "19/06/2026 16:00", "fase": "Fase de Grupos", "grupo": "J", "time1": "Áustria", "time2": "Jordânia", "placar1": null, "placar2": null, "links": {"cazetv": "https://youtube.com/@CazeTV", "ge": "https://ge.globo.com",
+    "sportv": "https://globoplay.globo.com/canais/sportv/"} },
+  { "id": 20, "data": "20/06/2026 13:00", "fase": "Fase de Grupos", "grupo": "K", "time1": "Portugal", "time2": "RD do Congo", "placar1": null, "placar2": null, "links": {"cazetv": "https://youtube.com/@CazeTV", "ge": "https://ge.globo.com",
+    "sportv": "https://globoplay.globo.com/canais/sportv/"} },
+  { "id": 21, "data": "20/06/2026 16:00", "fase": "Fase de Grupos", "grupo": "K", "time1": "Uzbequistão", "time2": "Colômbia", "placar1": null, "placar2": null, "links": {"cazetv": "https://youtube.com/@CazeTV", "ge": "https://ge.globo.com",
+    "sportv": "https://globoplay.globo.com/canais/sportv/"} },
+  { "id": 22, "data": "21/06/2026 13:00", "fase": "Fase de Grupos", "grupo": "L", "time1": "Inglaterra", "time2": "Croácia", "placar1": null, "placar2": null, "links": {"cazetv": "https://youtube.com/@CazeTV", "ge": "https://ge.globo.com",
+    "sportv": "https://globoplay.globo.com/canais/sportv/"} },
+  { "id": 23, "data": "21/06/2026 16:00", "fase": "Fase de Grupos", "grupo": "L", "time1": "Gana", "time2": "Panamá", "placar1": null, "placar2": null, "links": {"cazetv": "https://youtube.com/@CazeTV", "ge": "https://ge.globo.com"} }
+]
 }
