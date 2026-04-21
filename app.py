@@ -29,20 +29,51 @@ def carregar_dados():
     return None
 
 def buscar_odds():
-    # Pega a chave dos secrets do Streamlit
-    api_key = st.secrets.get("ODDS_API_KEY")
-    if not api_key: return None
+    # 1. Carregamento seguro da chave via Secrets (Já validado no seu Desktop)
+    try:
+        api_key = st.secrets["ODDS_API_KEY"]
+    except Exception:
+        # Se você apagar o secrets.toml por engano, o app avisa sem quebrar
+        return None 
     
     url = f"https://api.the-odds-api.com/v4/sports/soccer_fifa_world_cup_winner/odds/?apiKey={api_key}&regions=eu&markets=outrights"
-    traducoes = {"Argentina": "Argentina", "France": "França", "Brazil": "Brasil", "England": "Inglaterra", "Spain": "Espanha", "Germany": "Alemanha", "Japan": "Japão", "Portugal": "Portugal"}
+    
+    # Dicionário de traduções para manter o padrão visual
+    traducoes = {
+        "Argentina": "Argentina", "France": "França", "Brazil": "Brasil", 
+        "England": "Inglaterra", "Spain": "Espanha", "Germany": "Alemanha", 
+        "Japan": "Japão", "Portugal": "Portugal"
+    }
     
     try:
         response = requests.get(url, timeout=10)
+        
+        # 2. Tratamento de status da API
         if response.status_code == 200:
-            data = response.json()[0]['bookmakers'][0]['markets'][0]['outcomes']
-            lista = [{'time': traducoes.get(o['name'], o['name']), 'chance': round(100/o['price'], 2)} for o in data]
-            return pd.DataFrame(lista).sort_values('chance', ascending=False).head(12)
-    except: return None
+            raw_data = response.json()
+            if raw_data:
+                # Extração segura seguindo a hierarquia do JSON da Odds API
+                data = raw_data[0]['bookmakers'][0]['markets'][0]['outcomes']
+                lista = [
+                    {
+                        'time': traducoes.get(o['name'], o['name']), 
+                        'chance': round(100/o['price'], 2)
+                    } for o in data
+                ]
+                # Retorna o Top 12 ordenado por maior probabilidade
+                return pd.DataFrame(lista).sort_values('chance', ascending=False).head(12)
+        
+        # 3. Se o status for 401 (créditos esgotados), o Streamlit avisa o motivo real
+        elif response.status_code == 401:
+            st.warning("Aguardando renovação mensal de créditos da API (Próximo reset: 13/05).")
+            return None
+            
+        return None
+
+    except Exception as e:
+        # Log técnico para o seu terminal no VS Code
+        print(f"Erro de conexão na busca de Odds: {e}")
+        return None
 
 # --- INÍCIO DO APP ---
 dados = carregar_dados()
